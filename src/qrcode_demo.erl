@@ -51,7 +51,7 @@ run() ->
 	run(<<"demo@mydomain.com">>, Passcode, ?PERIOD).
 
 run(Domain, Passcode, Seconds) ->
-	PasscodeBase32 = base32:encode(Passcode),
+	PasscodeBase32 = qrcode_base32:encode(Passcode),
 	Period = list_to_binary(integer_to_list(Seconds)),
 	Token = <<"otpauth://totp/", Domain/binary, "?period=", Period/binary, "&secret=", PasscodeBase32/binary>>,
 	?TTY({token, Token}),
