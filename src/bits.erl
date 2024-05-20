@@ -14,7 +14,7 @@
 
 -module(bits).
 
--export([reverse/1, duplicate/2, append/1, bitlist/1, bitstring/1, stringbits/1]).
+%%-export([reverse/1, duplicate/2, append/1, bitlist/1, bitstring/1, stringbits/1]).
 -compile(export_all).
 
 reverse(Bin) ->
