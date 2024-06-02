@@ -9,3 +9,6 @@ test/*
 work/*
 *~
 *.sw?
+_build
+rebar3.mk
+rebar3
