@@ -42,6 +42,7 @@
 -include("qrcode.hrl").
 
 -compile(export_all).
+-compile(nowarn_export_all).
 
 -define(TTY(Term), io:format(user, "[~p] ~p~n", [?MODULE, Term])).
 -define(PERIOD, 30).
