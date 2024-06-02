@@ -12,7 +12,7 @@
 % See the License for the specific language governing permissions and
 % limitations under the License.
 
--module(bits).
+-module(nqr_bits).
 
 -export([reverse/1, duplicate/2, append/1, bitlist/1, bitstring/1, stringbits/1]).
 %%-compile(export_all).

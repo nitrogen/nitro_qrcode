@@ -12,7 +12,7 @@
 % See the License for the specific language governing permissions and
 % limitations under the License.
 
--module(qrcode).
+-module(nitro_qrcode).
 
 -include("qrcode.hrl").
 -include("qrcode_params.hrl").
@@ -32,15 +32,15 @@ encode(Bin, ECC) when is_binary(Bin) ->
 	Content = encode_content(Params, Bin),
 	BlocksWithECC = generate_ecc_blocks(Params, Content),
 	Codewords = interleave_blocks(BlocksWithECC),
-	Matrix = qrcode_matrix:embed_data(Params, Codewords),
-	MaskedMatrices = qrcode_mask:generate(Params, Matrix),
-	Candidates = [qrcode_matrix:overlay_static(Params, M) || M <- MaskedMatrices],
-	{MaskType, SelectedMatrix} = qrcode_mask:select(Candidates),
+	Matrix = nqr_matrix:embed_data(Params, Codewords),
+	MaskedMatrices = nqr_mask:generate(Params, Matrix),
+	Candidates = [nqr_matrix:overlay_static(Params, M) || M <- MaskedMatrices],
+	{MaskType, SelectedMatrix} = nqr_mask:select(Candidates),
 	Params0 = Params#qr_params{mask = MaskType},
 	FMT = format_info_bits(Params0),
 	VSN = version_info_bits(Params0),
 	#qr_params{version = Version, dimension = Dim, ec_level = _ECC} = Params0,
-	QRCode = qrcode_matrix:finalize(Dim, FMT, VSN, ?QUIET_ZONE, SelectedMatrix),
+	QRCode = nqr_matrix:finalize(Dim, FMT, VSN, ?QUIET_ZONE, SelectedMatrix),
 	%% NOTE: Added "API" record
 	#qrcode{version = Version, ecc = ECC, dimension = Dim + ?QUIET_ZONE * 2, data = QRCode}.
 
@@ -49,7 +49,7 @@ choose_qr_params(Bin, ECLevel) ->
 	Mode = choose_encoding(Bin),
 	{Mode, Version, ECCBlockDefs, Remainder} = choose_version(Mode, ECLevel, byte_size(Bin)),
 	AlignmentCoords = alignment_patterns(Version),
-	Dim = qrcode_matrix:dimension(Version),
+	Dim = nqr_matrix:dimension(Version),
 	#qr_params{mode = Mode, version = Version, dimension = Dim, ec_level = ECLevel,
 		block_defs = ECCBlockDefs, align_coords = AlignmentCoords, remainder = Remainder, data = Bin}.
 
@@ -110,7 +110,7 @@ generate_ecc(<<>>, [], Acc) ->
 
 generate_ecc0(Bin, Count, TotalLength, BlockLength, Acc) when byte_size(Bin) >= BlockLength, Count > 0 ->
 	<<Block:BlockLength/binary, Bin0/binary>> = Bin,
-	EC = qrcode_reedsolomon:encode(Block, TotalLength - BlockLength),
+	EC = nqr_reedsolomon:encode(Block, TotalLength - BlockLength),
 	generate_ecc0(Bin0, Count - 1, TotalLength, BlockLength, [{Block, EC}|Acc]);
 generate_ecc0(Bin, 0, _, _, Acc) ->
 	{lists:reverse(Acc), Bin}.
@@ -154,7 +154,7 @@ ecc('H') -> 2.
 
 %%
 alignment_patterns(Version) ->
-	D = qrcode_matrix:dimension(Version),
+	D = nqr_matrix:dimension(Version),
 	L = element(Version, ?ALIGNMENT_COORDINATES),
 	L0 = [{X, Y} || X <- L, Y <- L],
 	L1 = [{X, Y} || {X, Y} <- L0, is_finder_region(D, X, Y) =:= false],
@@ -192,12 +192,12 @@ cci0([_, _, X], _) ->
 version_info_bits(#qr_params{version = Version}) when Version < 7 ->
 	<<>>;
 version_info_bits(#qr_params{version = Version}) when Version =< 40 ->
-	BCH = qrcode_reedsolomon:bch_code(Version, ?VERSION_INFO_POLY),
+	BCH = nqr_reedsolomon:bch_code(Version, ?VERSION_INFO_POLY),
 	<<Version:6, BCH:12>>.
 
 format_info_bits(#qr_params{ec_level = ECLevel, mask = MaskType}) ->
 	Info = (ecc(ECLevel) bsl 3) bor MaskType,
-	BCH = qrcode_reedsolomon:bch_code(Info, ?FORMAT_INFO_POLY),
+	BCH = nqr_reedsolomon:bch_code(Info, ?FORMAT_INFO_POLY),
 	InfoWithEC = (Info bsl 10) bor BCH,
 	Value = InfoWithEC bxor ?FORMAT_INFO_MASK,
 	<<Value:15>>.

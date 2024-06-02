@@ -12,7 +12,7 @@
 % See the License for the specific language governing permissions and
 % limitations under the License.
 
--module(qrcode_demo).
+-module(nqr_demo).
 
 %% Shows how to achieve HOTP/SHA1 with a mobile phone using Google Authenticator.
 %%
@@ -51,11 +51,11 @@ run() ->
 	run(<<"demo@mydomain.com">>, Passcode, ?PERIOD).
 
 run(Domain, Passcode, Seconds) ->
-	PasscodeBase32 = qrcode_base32:encode(Passcode),
+	PasscodeBase32 = nqr_base32:encode(Passcode),
 	Period = list_to_binary(integer_to_list(Seconds)),
 	Token = <<"otpauth://totp/", Domain/binary, "?period=", Period/binary, "&secret=", PasscodeBase32/binary>>,
 	?TTY({token, Token}),
-	QRCode = qrcode:encode(Token),
+	QRCode = nitro_qrcode:encode(Token),
 	Image = simple_png_encode(QRCode),
 	Filename = "qrcode.png",
 	ok = file:write_file(Filename, Image),

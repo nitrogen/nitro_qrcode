@@ -12,7 +12,7 @@
 % See the License for the specific language governing permissions and
 % limitations under the License.
 
--module(qrcode_reedsolomon).
+-module(nqr_reedsolomon).
 
 -export([encode/2, bch_code/2]).
 

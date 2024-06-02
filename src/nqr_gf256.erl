@@ -15,7 +15,7 @@
 %% NOTE: This module implements finite field arithmetic over the galois field
 % GF(256) with a specified prime modulus.
 
--module(gf256).
+-module(nqr_gf256).
 
 -export([field/1, add/3, subtract/3, multiply/3]).
 -export([exponent/2, log/2, inverse/2, value/3]).
@@ -107,7 +107,7 @@ inverse(F = #gf256{}, X) ->
 value(#gf256{}, Poly, 0) ->
 	lists:last(Poly);
 value(F = #gf256{}, Poly, 1) ->
-	lists:foldl(fun(X, Sum) -> gf256:add(F, X, Sum) end, 0, Poly);
+	lists:foldl(fun(X, Sum) -> nqr_gf256:add(F, X, Sum) end, 0, Poly);
 value(F = #gf256{}, [H|T], X) ->
 	value(F, T, X, H).
 %
@@ -129,7 +129,7 @@ monomial_product(F, Poly, Coeff, Degree) ->
 	monomial_product(F, Poly, Coeff, Degree, []).
 %
 monomial_product(F, [H|T], C, D, Acc) ->
-	P = gf256:multiply(F, H, C),
+	P = nqr_gf256:multiply(F, H, C),
 	monomial_product(F, T, C, D, [P|Acc]);
 monomial_product(F, [], C, D, Acc) when D > 0 ->
 	monomial_product(F, [], C, D - 1, [0|Acc]);

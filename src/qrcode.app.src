@@ -1,7 +1,0 @@
-{application,qrcode,
- [{description,"QRCode Encoder"},
-  {vsn,"1.0.3"},
-  {modules,[]},
-  {registered,[]},
-  {env,[]},
-  {applications,[kernel,stdlib]}]}.

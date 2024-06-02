@@ -1,14 +1,18 @@
--module(qrcode_svg).
+-module(nqr_svg).
 -export([tag/1]).
 
-% Include necessary library
 -include("qrcode.hrl").
 
+tag(Data) when is_list(Data) ->
+    tag(list_to_binary(Data));
 tag(Data) when is_binary(Data) ->
-    QrCode = qrcode:encode(Data),
+    QrCode = nitro_qrcode:encode(Data),
     Svg = pixels(QrCode),
-    SvgTag = io_lib:format("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 ~p ~p'>~s</svg>", [width(QrCode), height(QrCode), Svg]),
-    iolist_to_binary(SvgHtml).
+    Dim = QrCode#qrcode.dimension,
+    #{
+        viewbox=io_lib:format("0 0 ~p ~p", [Dim, Dim]),
+        data=Svg
+    }.
 
 pixels(#qrcode{data=Data, dimension=Dim}) ->
     pixels(Data, Dim).
@@ -39,8 +43,5 @@ process_bits(RowNum, ColNum, <<0:1, Bits/bits>>) ->
 black_pixel(RowNum, ColNum) ->
     io_lib:format("<rect x='~p' y='~p' width='1' height='1' fill='black' />", [ColNum, RowNum]).
 
-width(QrCode) ->
-    QrCode#qrcode.dimension.
-
-height(QrCode) ->
+dimension(QrCode) ->
     QrCode#qrcode.dimension.

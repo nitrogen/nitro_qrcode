@@ -1,0 +1,7 @@
+{application,nitro_qrcode,
+ [{description,"Nitrogen QRCode Encoder"},
+  {vsn,"1.1.0"},
+  {modules,[]},
+  {registered,[]},
+  {env,[]},
+  {applications,[kernel,stdlib]}]}.
