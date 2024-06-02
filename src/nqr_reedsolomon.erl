@@ -20,11 +20,11 @@
 
 %%
 encode(Bin, Degree) when Degree > 0 ->
-	Field = gf256:field(?QRCODE_GF256_PRIME_MODULUS),
+	Field = nqr_gf256:field(?QRCODE_GF256_PRIME_MODULUS),
 	Generator = generator(Field, Degree),
 	Data = binary_to_list(Bin),
-	Coeffs = gf256:monomial_product(Field, Data, 1, Degree),
-	{_Quotient, Remainder} = gf256:divide(Field, Coeffs, Generator),
+	Coeffs = nqr_gf256:monomial_product(Field, Data, 1, Degree),
+	{_Quotient, Remainder} = nqr_gf256:divide(Field, Coeffs, Generator),
 	ErrorCorrectionBytes = list_to_binary(Remainder),
 	<<ErrorCorrectionBytes/binary>>.
 
@@ -44,7 +44,7 @@ generator(F, D) when D > 0 ->
 generator(_, P, D, D) ->
 	P;
 generator(F, P, D, Count) ->
-	P0 = gf256:polynomial_product(F, P, [1, gf256:exponent(F, Count)]),
+	P0 = nqr_gf256:polynomial_product(F, P, [1, nqr_gf256:exponent(F, Count)]),
 	generator(F, P0, D, Count + 1).
 	
 %
