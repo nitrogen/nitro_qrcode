@@ -1,7 +1,12 @@
 {application,nitro_qrcode,
- [{description,"Nitrogen QRCode Encoder"},
-  {vsn,"1.1.0"},
-  {modules,[]},
-  {registered,[]},
-  {env,[]},
-  {applications,[kernel,stdlib]}]}.
+	[{description,"Nitrogen QRCode Encoder"},
+	{vsn,"1.1.0"},
+	{modules,[]},
+	{registered,[]},
+	{env,[]},
+	{licenses, ["Apache-2.0"]},
+	{links, [
+		{"Homepage", "https://nitrogenproject.com"},
+		{"GitHub", "https://github.com/nitrogen/nitro_qrcode"}
+	]},
+	{applications,[kernel,stdlib]}]}.
