@@ -25,10 +25,8 @@ tag(Data) when is_binary(Data) ->
     Dim = QrCode#qrcode.dimension,
     Contents = iolist_to_binary(pixels(QrCode)),
     Viewbox = iolist_to_binary(io_lib:format("0 0 ~p ~p", [Dim, Dim])),
-    #{
-        viewbox=>Viewbox,
-        contents=>Contents
-    }.
+    Attrs = [{viewbox, Viewbox}],
+    {Attrs, Contents}.
 
 pixels(#qrcode{data=Data, dimension=Dim}) ->
     pixels(Data, Dim).
